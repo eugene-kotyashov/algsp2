@@ -135,7 +135,8 @@ public class SAP {
         private void validateVertex(int v) {
             int V = marked.length;
             if (v < 0 || v >= V)
-                throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
+                throw new IllegalArgumentException
+                ("vertex " + v + " is not between 0 and " + (V-1));
         }
         
         // throw an IllegalArgumentException unless {@code 0 <= v < V}
@@ -146,7 +147,8 @@ public class SAP {
             int V = marked.length;
             for (int v : vertices) {
                 if (v < 0 || v >= V) {
-                    throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
+                    throw new IllegalArgumentException
+                        ("vertex " + v + " is not between 0 and " + (V-1));
                 }
             }
         }
@@ -173,15 +175,15 @@ public class SAP {
             throw new java.lang.IllegalArgumentException();
         BreadthFirstDirectedPaths bfv = 
             new BreadthFirstDirectedPaths(dg, v);
-         BreadthFirstDirectedPaths bfw = 
+        BreadthFirstDirectedPaths bfw = 
             new BreadthFirstDirectedPaths(dg, w);
-         int len = Integer.MAX_VALUE;
-         for(int vx = 0; vx < dg.V(); vx++) {
-             if ( bfv.hasPathTo(vx) && bfw.hasPathTo(vx) ) {
-                 int tmp = bfv.distTo(vx)+ bfw.distTo(vx);
-                 if ( len > tmp) len = tmp;
-             }
-         }
+        int len = Integer.MAX_VALUE;
+        for(int vx = 0; vx < dg.V(); vx++) {
+            if ( bfv.hasPathTo(vx) && bfw.hasPathTo(vx) ) {
+                int tmp = bfv.distTo(vx)+ bfw.distTo(vx);
+                if ( len > tmp) len = tmp;
+            }
+        }
         if (len < Integer.MAX_VALUE)        
             return len;
         return -1;
@@ -194,32 +196,60 @@ public class SAP {
             throw new java.lang.IllegalArgumentException();
        BreadthFirstDirectedPaths bfv = 
             new BreadthFirstDirectedPaths(dg, v);
-         BreadthFirstDirectedPaths bfw = 
+       BreadthFirstDirectedPaths bfw = 
             new BreadthFirstDirectedPaths(dg, w);
-         int len = Integer.MAX_VALUE;
-         int anc = -1;
-         for(int vx = 0; vx < dg.V(); vx++) {
-             if ( bfv.hasPathTo(vx) && bfw.hasPathTo(vx) ) {
-                 int tmp = bfv.distTo(vx)+ bfw.distTo(vx);
-                 if ( len > tmp) {
-                     len = tmp;
-                     anc = vx;
-                 }
-             }
-         }
-        return anc;
+       int len = Integer.MAX_VALUE;
+       int anc = -1;
+       for(int vx = 0; vx < dg.V(); vx++) {
+           if ( bfv.hasPathTo(vx) && bfw.hasPathTo(vx) ) {
+               int tmp = bfv.distTo(vx)+ bfw.distTo(vx);
+               if ( len > tmp) {
+                   len = tmp;
+                   anc = vx;
+               }
+           }
+       }
+       return anc;
    }
 
    // length of shortest ancestral path between any vertex in v and any vertex 
    //in w; -1 if no such path
    public int length(Iterable<Integer> v, Iterable<Integer> w) {
+       BreadthFirstDirectedPaths bfv = 
+            new BreadthFirstDirectedPaths(dg, v);
+       BreadthFirstDirectedPaths bfw = 
+           new BreadthFirstDirectedPaths(dg, w);
+       int len = Integer.MAX_VALUE;
+       for(int vx = 0; vx < dg.V(); vx++) {
+           if ( bfv.hasPathTo(vx) && bfw.hasPathTo(vx) ) {
+               int tmp = bfv.distTo(vx)+ bfw.distTo(vx);
+               if ( len > tmp) len = tmp;
+           }
+       }
+       if (len < Integer.MAX_VALUE)        
+           return len;
        return -1;
    }
 
    // a common ancestor that participates in shortest ancestral path;
    //-1 if no such path
    public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-       return -1;
+       BreadthFirstDirectedPaths bfv = 
+            new BreadthFirstDirectedPaths(dg, v);
+       BreadthFirstDirectedPaths bfw = 
+            new BreadthFirstDirectedPaths(dg, w);
+       int len = Integer.MAX_VALUE;
+       int anc = -1;
+       for(int vx = 0; vx < dg.V(); vx++) {
+           if ( bfv.hasPathTo(vx) && bfw.hasPathTo(vx) ) {
+               int tmp = bfv.distTo(vx)+ bfw.distTo(vx);
+               if ( len > tmp) {
+                   len = tmp;
+                   anc = vx;
+               }
+           }
+       }
+       return anc;
    }
 
    // do unit testing of this class
