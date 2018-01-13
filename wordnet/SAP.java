@@ -12,11 +12,12 @@ public class SAP {
     private class BreadthFirstDirectedPaths {
         private static final int INFINITY = Integer.MAX_VALUE;
         private boolean[] marked;  // marked[v] = is there an s->v path?
-        private int[] edgeTo;      // edgeTo[v] = last edge on shortest s->v path
+        private int[] edgeTo;   // edgeTo[v] = last edge on shortest s->v path
         private int[] distTo;      // distTo[v] = length of shortest s->v path
         
         /**
-         * Computes the shortest path from {@code s} and every other vertex in graph {@code G}.
+         * Computes the shortest path from {@code s} and every other 
+         * vertex in graph {@code G}.
          * @param G the digraph
          * @param s the source vertex
          * @throws IllegalArgumentException unless {@code 0 <= v < V}
@@ -32,7 +33,8 @@ public class SAP {
         }
         
         /**
-         * Computes the shortest path from any one of the source vertices in {@code sources}
+         * Computes the shortest path from any one of the source vertices
+         * in {@code sources}
          * to every other vertex in graph {@code G}.
          * @param G the digraph
          * @param sources the source vertices
@@ -90,9 +92,11 @@ public class SAP {
         }
         
         /**
-         * Is there a directed path from the source {@code s} (or sources) to vertex {@code v}?
+         * Is there a directed path from the source {@code s} (or sources) 
+         * to vertex {@code v}?
          * @param v the vertex
-         * @return {@code true} if there is a directed path, {@code false} otherwise
+         * @return {@code true} if there is a directed path, {@code false} 
+         * otherwise
          * @throws IllegalArgumentException unless {@code 0 <= v < V}
          */
         public boolean hasPathTo(int v) {
@@ -101,7 +105,8 @@ public class SAP {
         }
         
         /**
-         * Returns the number of edges in a shortest path from the source {@code s}
+         * Returns the number of edges in a shortest path from the source 
+         * {@code s}
          * (or sources) to vertex {@code v}?
          * @param v the vertex
          * @return the number of edges in a shortest path

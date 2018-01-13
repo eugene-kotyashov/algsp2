@@ -7,7 +7,8 @@ import java.util.TreeSet;
 public class WordNet {
     
     private Digraph dg;
-    private TreeSet<String> nounSet;
+    private TreeMap<String, ArrayList<Integer>> nounSet;
+    private ArrayList<String> synsetList;
     
     private class DFS {
         private boolean marked[];
@@ -51,14 +52,21 @@ public class WordNet {
            throw new java.lang.IllegalArgumentException();
        //parse synsets file
        In synsetsIn = new In(synsets);
-       ArrayList<String[]> syns = new ArrayList<String[]>();
-       nounSet = new TreeSet<String>();
+       synsetList = new ArrayList<String>();       
+       nounSet = new TreeMap<String, ArrayList<Integer>>();
        while (!synsetsIn.isEmpty()) {
            String[] tmp = synsetsIn.readLine().split(",");
            String[] tmpSyns = tmp[1].split(" ");
-           syns.add(tmpSyns);
-           for (String s : tmpSyns)
-               nounSet.add(s);
+           synsetList.add(tmp[1]);
+           for (String s : tmpSyns) {
+               if (nounSet.containsKey(s)) {
+                   ArrayList<Integer> atmp = 
+                       new ArrayList<Integer>(nounSet.get(s));
+                   atmp.add(Integer.parseInt(tmp[0]));
+               } else
+                   nounSet.put
+                   (s, new ArrayList<Integer>(Integer.parseInt(tmp[0])));
+           }
        }
        
        /*
@@ -89,7 +97,7 @@ public class WordNet {
            StdOut.println();
        }
 */
-       dg = new Digraph(syns.size());
+       dg = new Digraph(synsetList.size());
        for (Integer key : hyps.keySet()) {
            for(int arr : hyps.get(key)) {
                dg.addEdge(key, arr);
@@ -97,7 +105,7 @@ public class WordNet {
        }
        ////
        StdOut.println(dg.V() + " vertices "+dg.E() + " edges");
-       for(String s : nounSet)
+       for(String s : nounSet.keySet())
            StdOut.println(s);
        
        StdOut.println("Digraph is ");
@@ -126,14 +134,14 @@ public class WordNet {
 
    // returns all WordNet nouns
    public Iterable<String> nouns() {
-       return new TreeSet<String>(nounSet);
+       return new TreeSet<String>(nounSet.keySet());
    }
 
    // is the word a WordNet noun?
    public boolean isNoun(String word) {
        if (word == null)
            throw new java.lang.IllegalArgumentException();
-       return nounSet.contains(word);
+       return nounSet.keySet().contains(word);
    }
 
    // distance between nounA and nounB (defined below)
@@ -141,7 +149,8 @@ public class WordNet {
        if ((nounA == null) || (nounB == null) || 
            !isNoun(nounA) || !isNoun(nounB))
            throw new java.lang.IllegalArgumentException();
-       return 0;
+       SAP sap = new SAP(dg);
+       return sap.length(nounSet.get(nounA), nounSet.get(nounB));
    }
 
    // a synset (second field of synsets.txt) that is the common 
@@ -151,8 +160,12 @@ public class WordNet {
        if ((nounA == null) || (nounB == null) || 
            !isNoun(nounA) || !isNoun(nounB))
            throw new java.lang.IllegalArgumentException();
-       //SAP sap = new SAP(
-       return null;
+       SAP sap = new SAP(dg);
+       int synsetId = sap.ancestor(nounSet.get(nounA), nounSet.get(nounB));
+       if (synsetId != -1) 
+           return synsetList.get(synsetId);
+       else
+           return null;
    }
 
    // do unit testing of this class
