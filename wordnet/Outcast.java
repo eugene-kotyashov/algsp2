@@ -1,3 +1,20 @@
+/******************************************************************************
+ *  Name:    Eugene Kotyashov
+ *  NetID:   euk
+ *  Precept: P01
+ *
+ *  Partner Name:    N/A
+ *  Partner NetID:   N/A
+ *  Partner Precept: N/A
+ * 
+ *  Description: class searching word that have less in common with all other
+ *  words specified in input file
+ *
+******************************************************************************/
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
+
+
 public class Outcast {
 // constructor takes a WordNet object 
     
@@ -11,23 +28,23 @@ public class Outcast {
     public String outcast(String[] nouns)   {
         for (String s : nouns) {
             if (!wn.isNoun(s)) {
-                throw new java.lang.IllegalArgumentException( 
+                throw new java.lang.IllegalArgumentException(
             s+ " is not a wordnet noun!");
             }
         }
         int [] dist = new int[nouns.length];
-        for (int i = 0; i< nouns.length; i++) {
+        for (int i = 0; i < nouns.length; i++) {
             dist[i] = 0;
             for (int j = 0; j < nouns.length; j++) {
                 if (i == j) continue;
-                dist[i] += wn.distance(nouns[i],nouns[j]);
+                dist[i] += wn.distance(nouns[i], nouns[j]);
             }
         }
-        for(int d : dist)
-            StdOut.println(d);
+//        for(int d : dist)
+//            StdOut.println(d);
         int max = 0;
         int maxIndex = -1;
-        for (int i= 0; i< dist.length; i++) {
+        for (int i = 0; i < dist.length; i++) {
             if (max < dist[i]) {
                 max = dist[i];
                 maxIndex = i;

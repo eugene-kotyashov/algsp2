@@ -1,3 +1,15 @@
+/******************************************************************************
+ *  Name:    Eugene Kotyashov
+ *  NetID:   euk
+ *  Precept: P01
+ *
+ *  Partner Name:    N/A
+ *  Partner NetID:   N/A
+ *  Partner Precept: N/A
+ * 
+ *  Description: class used to create WordNet graph from a 2 input files
+ *  also checks that graph is acyclic and has only one root
+******************************************************************************/
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Digraph;
 import java.util.ArrayList;
@@ -11,14 +23,14 @@ public class WordNet {
     private ArrayList<String> synsetList;
     
     private class DFS {
-        private boolean marked[];
-        private boolean onStack[];
+        private boolean[] marked;
+        private boolean[] onStack;
         private boolean foundCycle;
-        public DFS (Digraph dg) {
+        public DFS(Digraph dg) {
             marked = new boolean[dg.V()];
             onStack = new boolean[dg.V()];
             foundCycle = false;
-            for (int v = 0; v<dg.V(); v++) {
+            for (int v = 0; v < dg.V(); v++) {
                 if (!marked[v] && !foundCycle) {
                     dfs(dg, v);
                 }
@@ -31,16 +43,16 @@ public class WordNet {
         private void dfs(Digraph dg, int v) {
             marked[v] = true;
             onStack[v] = true;
-            for(int w : dg.adj(v)) {
+            for (int w : dg.adj(v)) {
                 if (foundCycle) 
                     return; 
                 if (!marked[w]) 
-                    dfs(dg,w);
+                    dfs(dg, w);
                 else
                 if (onStack[w])
                     foundCycle = true;
             }
-            onStack[v]=false;
+            onStack[v] = false;
         }
     }
     
@@ -60,15 +72,18 @@ public class WordNet {
            synsetList.add(tmp[1]);
            for (String s : tmpSyns) {
                if (nounSet.containsKey(s)) {
-                   ArrayList<Integer> atmp = 
-                       new ArrayList<Integer>(nounSet.get(s));
+                   ArrayList<Integer> atmp = nounSet.get(s);                   
                    atmp.add(Integer.parseInt(tmp[0]));
-               } else
-                   nounSet.put
-                   (s, new ArrayList<Integer>(Integer.parseInt(tmp[0])));
+                   nounSet.put(s, atmp);
+               }
+               else {
+                   ArrayList<Integer> a = new ArrayList<Integer>();
+                   a.add(Integer.parseInt(tmp[0]));
+                   nounSet.put(s, a);
+               }
            }
        }
-       
+       //StdOut.println("synsets parsed");
        /*
        for(String[] ss : syns) {
            for(String s : ss) {
@@ -79,14 +94,14 @@ public class WordNet {
        */
        //parse hypernyms file
        In hypsIn = new In(hypernyms);
-       TreeMap<Integer, int[]> hyps = new TreeMap<Integer,int[]>();
-       while (! hypsIn.isEmpty()) {
+       TreeMap<Integer, int[]> hyps = new TreeMap<Integer, int[]>();
+       while (!hypsIn.isEmpty()) {
            String tmp = hypsIn.readLine();
            String [] tmps = tmp.split(",");
-           int[] synInts = new int[tmps.length-1];
-           for(int i=1; i<tmps.length; i++)
+           int[] synInts = new int[tmps.length - 1];
+           for (int i = 1; i < tmps.length; i++)
                synInts[i-1] = Integer.parseInt(tmps[i]);
-           hyps.put(new Integer(Integer.parseInt(tmps[0])), synInts);
+           hyps.put(Integer.parseInt(tmps[0]), synInts);
        }                  
        /*    
        for (Integer key : hyps.keySet()) {
@@ -99,22 +114,24 @@ public class WordNet {
 */
        dg = new Digraph(synsetList.size());
        for (Integer key : hyps.keySet()) {
-           for(int arr : hyps.get(key)) {
+           for (int arr : hyps.get(key)) {
                dg.addEdge(key, arr);
            }
        }
-       ////
+       //StdOut.println("hypernyms parsed");
+       /*
        StdOut.println(dg.V() + " vertices "+dg.E() + " edges");
        for(String s : nounSet.keySet())
            StdOut.println(s);
        
        StdOut.println("Digraph is ");
        StdOut.println(dg);
+       */
        //find number of roots
        int rootCount = 0;
-       for (int v = 0; v<dg.V(); v++) {
+       for (int v = 0; v < dg.V(); v++) {
            int outOrder = 0;
-           for( int w : dg.adj(v) )
+           for (int w : dg.adj(v))
                outOrder++;
            if (outOrder == 0)
                rootCount++;           
@@ -172,6 +189,6 @@ public class WordNet {
    public static void main(String[] args) {
        //StdOut.println(args[0]);
        //StdOut.println(args[1]);
-       WordNet wn = new WordNet(args[0], args[1]);
+       //WordNet wn = new WordNet(args[0], args[1]);
    }
 }
