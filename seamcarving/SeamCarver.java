@@ -52,12 +52,61 @@ public class SeamCarver {
    }
 // sequence of indices for vertical seam
    public   int[] findVerticalSeam() {
-       return new int[1];
+       int [] vertSeam = new int[pic.height()];
+       int [][] potentialSeams = new int[pic.width()][pic.height()];
+       double [] seamMinEnergies = new double[pic.width()];
+       double [][] totalMinEnergy = new double[pic.width()][pic.height()];
+       int [][] prevX = new int[pic.width()][pic.height()];
+       for(int x = 0; x < pic.width()-1; x++) {
+           
+           for(int ix = 0; ix < pic.width(); ix++) {
+               for(int y = 0; y < pic.height(); y++) {
+                   totalMinEnergy[ix][y] = Double.POSITIVE_INFINITY;
+                   prevX[ix][y] = -1;
+               }
+           }
+           
+           for(int y = 1; y < pic.height()-1; y++) {
+               for (int nextX = x-y; nextX <= x+y; nextX++) {
+                   if ((nextX < 0) || (nextX > pic.width()-1)) continue;
+                   
+                   for(int xk = nextX-1; xk<=nextX+1; xk++) {
+                       if ((xk < x-y+1) || (xk > x+y-1)) continue;
+                       if (totalMinEnergy[nextX][y] < 
+                           energy[nextX][y] + energy[xk][y]) {
+                           totalMinEnergy[nextX][y] = 
+                               energy[nextX][y] + energy[xk][y];
+                           prevX[nextX][y] = xk;
+                       }
+                   } 
+                   
+               }
+           }
+           double minE = Double.POSITIVE_INFINITY;
+           int minE_X = -1;
+           for(int ix = 0; ix < pic.width(); ix++) {
+               if (minE < totalMinEnergy[x][pic.height()-1]) {
+                   minE = totalMinEnergy[x][pic.height()-1];
+                   minE_X = x;
+               }
+           }
+           seamMinEnergies[x] = minE;
+       //get lowest energy path with ending point minE_x and starting point
+           // at x
+           int ix = minE_X;
+           for(int y = pic.height()-1; y>0; y--) {
+               potentialSeams[x][y] = ix;
+               ix = prevX[ix][y];
+           }
+               
+       }
+       return vertSeam;
    }
 // remove horizontal seam from current picture
    public    void removeHorizontalSeam(int[] seam) {
    }
 // remove vertical seam from current picture
    public    void removeVerticalSeam(int[] seam) {
+       
    }
 }
